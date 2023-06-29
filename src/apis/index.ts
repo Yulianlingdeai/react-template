@@ -17,5 +17,16 @@ export default {
      */
     async downLoadTopicFile(params: { fileId: string }) {
         return await request.get(`/api/topic/downloadFile`, { params, responseType: "blob" });
+    },
+    /**
+     * 下载全部文件
+     * @param params
+     * @returns
+     */
+    async downloadAllFile(params: { meetingId: string }) {
+        return await request.get("/api/reserve/meeting/filesBatchDownload", {
+            params,
+            responseType: "blob"
+        });
     }
 };

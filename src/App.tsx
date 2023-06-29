@@ -90,21 +90,25 @@ export default function App() {
             ignore = true;
         };
     }, []);
-    const [state, setState] = useState(0);
-    console.log("代码执行一次");
-    const handleClick = () => {
-        console.log("点击了");
-        setState((n) => n + 1);
-    };
-    const handleDownload = (topicFile: topicFileItem) => {
+    const handleDownload = async (topicFile: topicFileItem) => {
         try {
-            const res = api.downLoadTopicFile({ fileId: topicFile.id });
+            const res = await api.downLoadTopicFile({ fileId: topicFile.id });
+        } catch (e) {
+            console.log(e);
+        }
+    };
+    const handleDownloadAllFile = async () => {
+        try {
+            const res = await api.downloadAllFile({
+                meetingId: "4c421eb4f4ad4ac6a0d30cf4d6fce9f3"
+            });
+            console.log("res", res);
         } catch (e) {
             console.log(e);
         }
     };
     return (
-        <div className="container" onClick={handleClick}>
+        <div className="container">
             {/* <h1>测试会议测试会议测试会议测试会议测试会议测试会</h1> */}
             <h1>{meetingInfo && meetingInfo.title}</h1>
             <div className="container-item">
@@ -145,35 +149,33 @@ export default function App() {
                         </div>
                         {item.topicFilesList.length &&
                             item.topicFilesList.map((topicFile, index) => (
-                                <>
-                                    <div className="container-topic">
-                                        {index + 1 + "、" + topicFile.name}
-                                        {/* 1、议题一文件一 */}
-                                        <span>
-                                            <Download
-                                                width={20}
-                                                height={20}
-                                                title="下载"
-                                                style={{
-                                                    marginLeft: "10px",
-                                                    verticalAlign: "bottom",
-                                                    cursor: "pointer"
-                                                }}
-                                                onClick={() => handleDownload(topicFile)}
-                                            ></Download>
-                                            <Preview
-                                                width={20}
-                                                height={20}
-                                                title="预览"
-                                                style={{
-                                                    marginLeft: "10px",
-                                                    verticalAlign: "bottom",
-                                                    cursor: "pointer"
-                                                }}
-                                            ></Preview>
-                                        </span>
-                                    </div>
-                                </>
+                                <div className="container-topic" key={topicFile.id}>
+                                    {index + 1 + "、" + topicFile.name}
+                                    {/* 1、议题一文件一 */}
+                                    <span>
+                                        <Download
+                                            width={20}
+                                            height={20}
+                                            title="下载"
+                                            style={{
+                                                marginLeft: "10px",
+                                                verticalAlign: "bottom",
+                                                cursor: "pointer"
+                                            }}
+                                            onClick={() => handleDownload(topicFile)}
+                                        ></Download>
+                                        <Preview
+                                            width={20}
+                                            height={20}
+                                            title="预览"
+                                            style={{
+                                                marginLeft: "10px",
+                                                verticalAlign: "bottom",
+                                                cursor: "pointer"
+                                            }}
+                                        ></Preview>
+                                    </span>
+                                </div>
                             ))}
                         {item.attendanceList.length && (
                             <div className="container-topic">
@@ -185,7 +187,12 @@ export default function App() {
                     </div>
                 ))}
             <div className="container-item">
-                <span style={{ color: "#1296db", cursor: "pointer" }}>下载全部文件</span>
+                <span
+                    style={{ color: "#1296db", cursor: "pointer" }}
+                    onClick={handleDownloadAllFile}
+                >
+                    下载全部文件
+                </span>
             </div>
         </div>
     );
