@@ -5,8 +5,6 @@ import axios from "axios";
 // import MyComponent from "@/components/MyComponent";
 
 export default function App() {
-    let a;
-    a = 1;
     useEffect(() => {
         const fetchData = async () => {
             try {
