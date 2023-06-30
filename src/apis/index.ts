@@ -16,7 +16,10 @@ export default {
      * @returns
      */
     async downLoadTopicFile(params: { fileId: string }) {
-        return await request.get(`/api/topic/downloadFile`, { params, responseType: "blob" });
+        return await request.get(`/api/topic/downloadFileNoIntercept`, {
+            params,
+            responseType: "blob"
+        });
     },
     /**
      * 下载全部文件
