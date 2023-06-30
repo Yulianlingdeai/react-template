@@ -5,7 +5,7 @@ import "./index.css";
 // 设置pdf.js的worker路径
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const PDFPreview = ({ pdfUrl }: { pdfUrl: string }) => {
+export default function PDFPreview({ pdfUrl }: { pdfUrl: string }) {
     const [numPages, setNumPages] = useState(0);
 
     const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
@@ -25,6 +25,4 @@ const PDFPreview = ({ pdfUrl }: { pdfUrl: string }) => {
             {/* <Page pageNumber={1} scale={0.2} />new Array(numPages) */}
         </div>
     );
-};
-
-export default PDFPreview;
+}

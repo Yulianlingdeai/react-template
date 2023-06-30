@@ -4,82 +4,24 @@ import api from "@/apis";
 import { ReactComponent as Download } from "@/assets/image/download.svg";
 import { ReactComponent as Preview } from "@/assets/image/preview.svg";
 import { useNavigate } from "react-router-dom";
+import type { topicFileItem, baseMeetingInfo } from "@/types";
 
-type userItem = {
-    createTime: string; // "2023-06-29T08:31:41.000+00:00";
-    id: string; // "31cae29a0ab04e74a9fdfc2499548075";
-    inputType: string; // "";
-    meetingId: string; // "4c421eb4f4ad4ac6a0d30cf4d6fce9f3";
-    mqttTopic: string; // "61be139d238a4526ad703df1b0a50c9b";
-    showOrder: number; // 2;
-    sortInput: number; // 0;
-    title: string; // "参会人员";
-    titleSort: number; // 2;
-    topicId: string; // "";
-    updateTime: string; // "";
-    userId: string; // "4e689487a6374d288d9637c2327ca8c7";
-    userName: string; // "甲";
-};
-type baseMeetingInfo = {
-    attendeeList: userItem[];
-    emcee: string; // "费矾";
-    meetingId: string; // "4c421eb4f4ad4ac6a0d30cf4d6fce9f3";
-    roomName: string; // "第一会议室";
-    seatChart: string; // "";
-    startTime: string; // "2023-06-27T07:00:00.000+00:00";
-    title: string; // "二维码分享测试";
-    topicInfoDtos: {
-        attendanceList: userItem[];
-        topic: {
-            broadcastCount: string; // "";
-            broadcastTime: string; // "-1";
-            durations: string; // "10";
-            id: number; // -517881855;
-            isRoll: string; // "";
-            isSound: string; // "";
-            meetingDept: string; // "";
-            meetingDeptName: string; // "张三";
-            meetingId: string; // "4c421eb4f4ad4ac6a0d30cf4d6fce9f3";
-            name: string; // "测试议题一";
-            noticeCount: string; // "";
-            reportingType: string; // "";
-            showOrder: number; // 1;
-            status: number; // 1;
-            symbol: string; // "";
-            topicId: string; // "a42b6e67fa6e4f2ba0ebbd9369e56b13";
-            topicType: string; // "议题";
-            userNameList: string; // "";
-            userNames: string; // "";
-            word: string; // "";
-        };
-        topicFilesList: topicFileItem[];
-    }[];
-};
-type topicFileItem = {
-    createTime: string; // "2023-06-26T06:05:43.000+00:00";
-    id: string; // "ddeb52c5e0cb4eeaba085674444070c8";
-    meetingId: string; // "4c421eb4f4ad4ac6a0d30cf4d6fce9f3";
-    name: string; // "测试议题1-1.pdf";
-    path: string; // "4c421eb4f4ad4ac6a0d30cf4d6fce9f3/2023/06/26/d453adbfdbe84f3ea9afc999abd9d946.pdf";
-    showOrder: number; // 1;
-    showUrl: string; // "https://47.109.57.192:9443/media/4c421eb4f4ad4ac6a0d30cf4d6fce9f3/2023/06/26/d453adbfdbe84f3ea9afc999abd9d946.pdf";
-    topicId: string; // "a42b6e67fa6e4f2ba0ebbd9369e56b13";
-    updateTime: string; // "2023-06-26T06:05:43.000+00:00";
-};
-export default function App() {
+export default function Home() {
     const [meetingInfo, setMeetingInfo] = useState<baseMeetingInfo | null>(null);
     const navigate = useNavigate();
+    const params = new URLSearchParams(location.search); // 获取 URL 的查询参数
+    const meetingId = params.get("meetingId") || "4c421eb4f4ad4ac6a0d30cf4d6fce9f3"; // 获取特定参数的值
+    console.log(meetingId);
     useEffect(() => {
         let ignore = false;
         const fetchData = async () => {
             try {
                 const res = await api.getMeetingInfoByQrCode({
-                    meetingId: "4c421eb4f4ad4ac6a0d30cf4d6fce9f3"
+                    meetingId
                 });
                 if (!ignore) {
                     console.log(res.data);
                     setMeetingInfo(res.data.data);
-                    console.log("123");
                 }
             } catch (error) {
                 console.error(error);
@@ -89,13 +31,11 @@ export default function App() {
         return () => {
             ignore = true;
         };
-    }, []);
+    }, [meetingId]);
     /**预览pdf */
     const handlePreview = async (topicFile: topicFileItem) => {
-        // setUrl(topicFile.showUrl);
         const res = await api.downLoadTopicFile({ fileId: topicFile.id });
         console.log(res);
-        // const filename = res.headers["content-disposition"];
         const blob = new Blob([res.data], { type: "application/pdf" });
         const href = window.URL.createObjectURL(blob);
         navigate(`/PdfPage?path=${href}`);
@@ -123,7 +63,7 @@ export default function App() {
     const handleDownloadAllFile = async () => {
         try {
             const res = await api.downloadAllFile({
-                meetingId: "4c421eb4f4ad4ac6a0d30cf4d6fce9f3"
+                meetingId
             });
             console.log("res", res);
             const filename = res.headers["content-disposition"];
@@ -186,7 +126,7 @@ export default function App() {
                             {item.topic.name}
                             {/* 议题一、关于测试会议的议题一 */}
                         </div>
-                        {item.topicFilesList.length &&
+                        {item.topicFilesList.length > 0 &&
                             item.topicFilesList.map((topicFile, index) => (
                                 <div className="container-topic" key={topicFile.id}>
                                     {index + 1 + "、" + topicFile.name}
@@ -217,11 +157,10 @@ export default function App() {
                                     </span>
                                 </div>
                             ))}
-                        {item.attendanceList.length && (
+                        {item.attendanceList.length > 0 && (
                             <div className="container-topic">
                                 列席人员：
                                 {item.attendanceList.map((user) => user.userName).join("、")}
-                                {/* 列席人员：刘静、张世杰 */}
                             </div>
                         )}
                     </div>
