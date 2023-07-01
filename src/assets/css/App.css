@@ -10,18 +10,52 @@ h1 {
 
 .container-item {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-wrap: wrap;
     margin: 10px 0;
 }
 
 .container-label {
-    /* width: 70px; */
+    width: 80px;
+    text-align: right;
+}
+
+.container-describe {
+    flex: 1;
+    text-align: center;
 }
 
 .container-topic {
     width: 100%;
-    text-align: center;
+    text-align: left;
+    padding: 0 0 0 16px;
     margin: 5px 0;
+}
+
+.topic-content {
+    position: relative;
+    width: 100%;
+    /* text-align: left; */
+    padding: 0 0 0 32px;
+    margin: 5px 0;
+}
+
+.icon-box {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    width: 50px;
+    height: 20px;
+    /* width: 100px; */
+}
+
+.download-all {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 10px 0;
 }

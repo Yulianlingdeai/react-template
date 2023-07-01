@@ -41,7 +41,7 @@ module.exports = override(
                 //关键:设置px2rem
                 px2rem({
                     remUnit: 37.5,
-                    exclude: /node-modules/i
+                    exclude: /node_modules\/antd-mobile/
                 }),
                 require("postcss-flexbugs-fixes"),
                 require("postcss-preset-env")({

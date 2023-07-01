@@ -16,3 +16,11 @@
 .pdf-container .react-pdf__Page__annotations {
     display: none;
 }
+
+.no-data {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
