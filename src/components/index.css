@@ -9,14 +9,20 @@
     height: 100%;
 }
 
-.pdf-container .react-pdf__Page__textContent {
+/* .pdf-container .react-pdf__Page__textContent {
     display: none;
 }
 
 .pdf-container .react-pdf__Page__annotations {
     display: none;
-}
+} */
 
+.pdf-container .react-pdf__message {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .no-data {
     width: 100vw;
     height: 100vh;

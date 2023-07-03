@@ -1,5 +1,6 @@
 const {
     override,
+    // fixBabelImports,
     addWebpackAlias,
     addPostcssPlugins,
     addLessLoader,
@@ -10,6 +11,11 @@ const px2rem = require("postcss-px2rem-exclude");
 const rewirePostcss = require("react-app-rewire-postcss");
 // const autoprefixer = require('autoprefixer');
 module.exports = override(
+    // 配置按需加载
+    // fixBabelImports("import", {
+    //     libraryName: "antd-mobile",
+    //     style: "css"
+    // }),
     addWebpackAlias({
         "@": path.resolve(__dirname, "src")
     }),
@@ -22,12 +28,12 @@ module.exports = override(
     //     //   exclude: /node_modules\/antd-mobile/
     //     })
     // ]),
-    addPostcssPlugins([
-        px2rem({
-            remUnit: 37.5,
-            exclude: /node_modules/i
-        })
-    ]),
+    // addPostcssPlugins([
+    //     px2rem({
+    //         remUnit: 37.5,
+    //         exclude: /node_modules/i
+    //     })
+    // ]),
     addLessLoader({
         strictMath: true,
         noIeCompat: true,
@@ -41,7 +47,8 @@ module.exports = override(
                 //关键:设置px2rem
                 px2rem({
                     remUnit: 37.5,
-                    exclude: /node_modules\/antd-mobile/
+                    exclude: /node_modules/
+                    // exclude: /^(?!.*node_modules).*$/
                 }),
                 require("postcss-flexbugs-fixes"),
                 require("postcss-preset-env")({

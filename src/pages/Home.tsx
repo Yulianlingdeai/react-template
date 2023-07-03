@@ -39,16 +39,7 @@ export default function Home() {
     }, [meetingId]);
     /**预览pdf */
     const handlePreview = async (topicFile: topicFileItem) => {
-        handler.current = Toast.show({
-            duration: 0,
-            content: "数据加载中…"
-        });
-        const res = await api.downLoadTopicFile({ fileId: topicFile.id });
-        console.log(res);
-        const blob = new Blob([res.data], { type: "application/pdf" });
-        const href = window.URL.createObjectURL(blob);
-        handler.current?.close();
-        navigate(`/PdfPage?path=${href}`);
+        navigate(`/PdfPage?id=${topicFile.id}`);
     };
     /**下载单个文件 */
     const handleDownload = async (topicFile: topicFileItem) => {
@@ -143,9 +134,11 @@ export default function Home() {
                     {/* </div> */}
                 </div>
             )}
-            <div className="container-item">
-                <div>议题列表：</div>
-            </div>
+            {meetingInfo && meetingInfo.topicInfoDtos.length > 0 && (
+                <div className="container-item">
+                    <div>议题列表：</div>
+                </div>
+            )}
             {meetingInfo &&
                 meetingInfo.topicInfoDtos.map((item) => (
                     <div className="container-item" key={item.topic.id}>
@@ -192,14 +185,17 @@ export default function Home() {
                         )}
                     </div>
                 ))}
-            <div className="download-all" style={{ marginTop: "10px" }}>
-                <span
-                    style={{ color: "#1296db", cursor: "pointer" }}
-                    onClick={handleDownloadAllFile}
-                >
-                    下载全部文件
-                </span>
-            </div>
+            {meetingInfo &&
+                meetingInfo.topicInfoDtos.some((item) => item.topicFilesList.length) && (
+                    <div className="download-all" style={{ marginTop: "10px" }}>
+                        <span
+                            style={{ color: "#1296db", cursor: "pointer" }}
+                            onClick={handleDownloadAllFile}
+                        >
+                            下载全部文件
+                        </span>
+                    </div>
+                )}
         </div>
     ) : (
         <NoData></NoData>
