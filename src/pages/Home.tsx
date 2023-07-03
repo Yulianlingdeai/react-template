@@ -14,7 +14,8 @@ export default function Home() {
     const handler = useRef<ToastHandler>();
     const navigate = useNavigate();
     const params = new URLSearchParams(location.search); // 获取 URL 的查询参数
-    const meetingId = params.get("meetingId") || "4c421eb4f4ad4ac6a0d30cf4d6fce9f3"; // 获取特定参数的值
+    const meetingId = params.get("meetingId") || ""; // 获取特定参数的值
+    // 4c421eb4f4ad4ac6a0d30cf4d6fce9f3
     console.log(meetingId);
     useEffect(() => {
         let ignore = false;
