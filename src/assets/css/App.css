@@ -14,6 +14,18 @@ h1 {
     align-items: center;
     flex-wrap: wrap;
     margin: 10px 0;
+    font-size: 14px;
+}
+
+.topic-list {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topic-box {
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ccc;
 }
 
 .container-label {
@@ -29,7 +41,7 @@ h1 {
 .container-topic {
     width: 100%;
     text-align: left;
-    padding: 0 0 0 16px;
+    /* padding: 0 0 0 16px; */
     margin: 5px 0;
 }
 
@@ -37,18 +49,27 @@ h1 {
     position: relative;
     width: 100%;
     /* text-align: left; */
-    padding: 0 0 0 32px;
+    /* display: flex; */
+    padding: 0 50px 0 16px;
     margin: 5px 0;
+}
+
+.liexi {
+    font-size: 12px;
 }
 
 .icon-box {
     position: absolute;
-    bottom: 0;
+    /* top: 0;
+    right: 0; */
+    top: 50%;
     right: 0;
+    transform: translate(0, -50%);
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 50px;
-    height: 20px;
+    height: 22px;
     /* width: 100px; */
 }
 

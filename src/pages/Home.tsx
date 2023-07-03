@@ -113,7 +113,7 @@ export default function Home() {
                     <div className="container-describe">{meetingInfo.emcee}</div>
                 </div>
             )}
-            <div className="container-item">
+            <div className="container-item" style={{ alignItems: "normal" }}>
                 <div className="container-label">参会人：</div>
                 <div className="container-describe">
                     {meetingInfo &&
@@ -135,30 +135,42 @@ export default function Home() {
                 </div>
             )}
             {meetingInfo && meetingInfo.topicInfoDtos.length > 0 && (
-                <div className="container-item">
-                    <div>议题列表：</div>
+                <div className="container-item topic-list">
+                    <div style={{ fontWeight: "bolder" }}>会议内容：</div>
+                    {meetingInfo &&
+                        meetingInfo.topicInfoDtos.some((item) => item.topicFilesList.length) && (
+                            <div className="download-all" style={{ marginTop: "10px" }}>
+                                <span
+                                    style={{ color: "#1296db", cursor: "pointer" }}
+                                    onClick={handleDownloadAllFile}
+                                >
+                                    下载全部文件
+                                </span>
+                            </div>
+                        )}
                 </div>
             )}
             {meetingInfo &&
                 meetingInfo.topicInfoDtos.map((item) => (
-                    <div className="container-item" key={item.topic.id}>
-                        <div className="container-topic">
-                            {item.topic.name}
+                    <div className="container-item topic-box" key={item.topic.id}>
+                        <div className="container-topic" style={{ fontWeight: "bolder" }}>
+                            {item.topic.topicType + item.topic.name}
                             {/* 议题一、关于测试会议的议题一 */}
                         </div>
                         {item.topicFilesList.length > 0 &&
                             item.topicFilesList.map((topicFile, index) => (
                                 <div className="topic-content" key={topicFile.id}>
-                                    {index + 1 + "、" + topicFile.name}
+                                    <span>{"文件" + (index + 1) + "："}</span>
+                                    {topicFile.name}
                                     {/* 1、议题一文件一 */}
-                                    <span>
+                                    <span className="icon-box">
                                         <Download
                                             width={20}
                                             height={20}
                                             title="下载"
                                             style={{
                                                 marginLeft: "10px",
-                                                verticalAlign: "bottom",
+                                                verticalAlign: "middle",
                                                 cursor: "pointer"
                                             }}
                                             onClick={() => handleDownload(topicFile)}
@@ -178,24 +190,13 @@ export default function Home() {
                                 </div>
                             ))}
                         {item.attendanceList.length > 0 && (
-                            <div className="topic-content">
+                            <div className="topic-content liexi">
                                 列席人员：
                                 {item.attendanceList.map((user) => user.userName).join("、")}
                             </div>
                         )}
                     </div>
                 ))}
-            {meetingInfo &&
-                meetingInfo.topicInfoDtos.some((item) => item.topicFilesList.length) && (
-                    <div className="download-all" style={{ marginTop: "10px" }}>
-                        <span
-                            style={{ color: "#1296db", cursor: "pointer" }}
-                            onClick={handleDownloadAllFile}
-                        >
-                            下载全部文件
-                        </span>
-                    </div>
-                )}
         </div>
     ) : (
         <NoData></NoData>
