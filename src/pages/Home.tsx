@@ -103,8 +103,13 @@ export default function Home() {
             // , { type: "application/zip" }
             const a = document.createElement("a");
             const href = window.URL.createObjectURL(blob);
-            a.href = href;
-            a.download = decodeURIComponent(filename.split("filename=")[1].replace(/"/g, ""));
+            if (/MicroMessenger/i.test(navigator.userAgent)) {
+                a.href = `http://47.109.100.216:5005/no-paper-meeting/api/reserve/meeting/filesBatchDownload?meetingId=${meetingId}`;
+                a.download = decodeURIComponent(filename.split("filename=")[1].replace(/"/g, ""));
+            } else {
+                a.href = href;
+                a.download = decodeURIComponent(filename.split("filename=")[1].replace(/"/g, ""));
+            }
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
