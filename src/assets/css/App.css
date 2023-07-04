@@ -80,3 +80,42 @@ h1 {
     flex-wrap: wrap;
     margin: 10px 0;
 }
+
+.custom-modal {
+    width: 100%;
+    /* inset: 0px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7); */
+}
+.custom-modal img {
+    width: 100%;
+    outline: none;
+}
+
+.custom-overlay {
+    position: fixed;
+    /* inset: 0px; */
+    /* background-color: rgba(255, 255, 255, 0.75); */
+    inset: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.image-gallery-slides {
+    overflow: inherit;
+    outline: none;
+    border: none;
+}
+.react-transform-wrapper {
+    overflow: inherit !important;
+    outline: none;
+    border: none;
+}
+
+/* .image-gallery .image-gallery-slide:focus {
+    outline: none;
+} */

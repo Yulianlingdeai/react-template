@@ -1,15 +1,21 @@
 import React, { useEffect, useState, useRef } from "react";
+import ReactImageGallery from "react-image-gallery";
+// import "react-image-gallery/styles/css/image-gallery.css";
+import ImageGallery from "@/components/ImageGallery";
 import "@/assets/css/App.css";
-import api from "@/apis";
+import NoData from "@/components/NoData";
 import { Toast } from "antd-mobile";
 import type { ToastHandler } from "antd-mobile/es/components/toast";
-import NoData from "@/components/NoData";
 import { ReactComponent as Download } from "@/assets/image/download.svg";
 import { ReactComponent as Preview } from "@/assets/image/preview.svg";
 import { useNavigate } from "react-router-dom";
 import type { topicFileItem, baseMeetingInfo } from "@/types";
+import api from "@/apis";
+import Modal from "react-modal";
 
 export default function Home() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedIndex, setSelectedIndex] = useState(0);
     const [meetingInfo, setMeetingInfo] = useState<baseMeetingInfo | null>(null);
     const handler = useRef<ToastHandler>();
     const navigate = useNavigate();
@@ -37,6 +43,17 @@ export default function Home() {
             ignore = true;
         };
     }, [meetingId]);
+
+    const openModal = (index: number) => {
+        setSelectedIndex(index);
+        setIsModalOpen(true);
+        document.body.style.overflow = "hidden"; // 禁止背后内容滚动
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        document.body.style.overflow = ""; // 恢复背后内容滚动
+    };
     /**预览pdf */
     const handlePreview = async (topicFile: topicFileItem) => {
         navigate(`/PdfPage?id=${topicFile.id}`);
@@ -54,8 +71,13 @@ export default function Home() {
             const blob = new Blob([res.data], { type: "application/pdf" });
             const a = document.createElement("a");
             const href = window.URL.createObjectURL(blob);
-            a.href = href;
-            a.download = decodeURIComponent(filename.split("filename=")[1].replace(/"/g, ""));
+            if (/MicroMessenger/i.test(navigator.userAgent)) {
+                a.href = `http://47.109.100.216:5005/no-paper-meeting/api/topic/downloadFileNoIntercept?fileId=${topicFile.id}`;
+                a.download = decodeURIComponent(filename.split("filename=")[1].replace(/"/g, ""));
+            } else {
+                a.href = href;
+                a.download = decodeURIComponent(filename.split("filename=")[1].replace(/"/g, ""));
+            }
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -122,18 +144,49 @@ export default function Home() {
                 {/* 甲、乙、丙、丁 */}
             </div>
             {meetingInfo && meetingInfo.seatChart && (
-                <div className="container-item">
+                <div className="container-item" style={{ overflow: "hidden" }}>
                     <div className="container-label">座次图：</div>
-                    {/* <div className="container-describe"> */}
-                    <img
+                    {/* <img
                         src={"http://47.109.100.216:5003/media/" + meetingInfo.seatChart}
                         alt=""
                         width="100%"
                         style={{ margin: "5px 0" }}
+                        onClick={() => openModal(0)}
+                    /> */}
+                    <ReactImageGallery
+                        items={[
+                            {
+                                original:
+                                    "http://47.109.100.216:5003/media/" + meetingInfo.seatChart
+                                // description: "座次图"
+                            }
+                        ]}
+                        onClick={() => openModal(0)}
+                        startIndex={selectedIndex}
+                        showNav={false}
+                        showPlayButton={false}
+                        showFullscreenButton={false}
+                        onSlide={(index) => setSelectedIndex(index)}
                     />
-                    {/* </div> */}
                 </div>
             )}
+            <Modal
+                isOpen={isModalOpen}
+                onRequestClose={() => {
+                    console.log(123);
+                    closeModal();
+                }}
+                // contentLabel="Image Gallery Modal"
+                ariaHideApp={false}
+                className="custom-modal"
+                overlayClassName="custom-overlay"
+            >
+                <div style={{ touchAction: "pan-y", maxHeight: "100vh" }}>
+                    <ImageGallery
+                        src={"http://47.109.100.216:5003/media/" + meetingInfo.seatChart}
+                    ></ImageGallery>
+                </div>
+            </Modal>
             {meetingInfo && meetingInfo.topicInfoDtos.length > 0 && (
                 <div className="container-item topic-list">
                     <div style={{ fontWeight: "bolder" }}>会议内容：</div>
