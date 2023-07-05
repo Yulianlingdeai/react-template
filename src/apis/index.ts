@@ -1,4 +1,5 @@
 import request from "@/utils/request";
+import { baseMeetingInfo } from "@/types";
 
 export default {
     /**
@@ -7,8 +8,9 @@ export default {
      * @returns
      */
     async getMeetingInfoByQrCode(params: { meetingId: string }) {
-        // http://192.168.0.17:10022/no-paper-meeting
-        return await request.get("/api/reserve/meetingInfoQRCode", { params });
+        return await request.get<any, baseMeetingInfo>("/api/reserve/meetingInfoQRCode", {
+            params
+        });
     },
     /**
      * 下载议题文件

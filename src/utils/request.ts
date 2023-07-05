@@ -10,8 +10,8 @@ const request = axios.create({
 // request interceptor
 request.interceptors.request.use(
     (config) => {
-        console.log("Starting proxy middleware");
-        console.log(process.env.REACT_APP_BASE_API);
+        // console.log("Starting proxy middleware");
+        // console.log(process.env.REACT_APP_BASE_API);
         return config;
     },
     (error) => {
@@ -33,7 +33,21 @@ request.interceptors.response.use(
      * You can also judge the status by HTTP Status Code
      */
     (response) => {
-        return response;
+        console.log("response===>>>>", response);
+        if (
+            response.headers["content-type"] &&
+            ((response.headers["content-type"] as string).includes("application/pdf") ||
+                (response.headers["content-type"] as string).includes("application/octet-stream"))
+        ) {
+            return response;
+        } else {
+            const { code, data } = response.data;
+            if (code && +code === 200) {
+                return data;
+            } else {
+                return Promise.reject(response);
+            }
+        }
     },
     (error) => {
         return Promise.reject(error);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import ReactImageGallery from "react-image-gallery";
 // import "react-image-gallery/styles/css/image-gallery.css";
-import ImageGallery from "@/components/ImageGallery";
+// import ImageGallery from "@/components/ImageGallery";
 import "@/assets/css/App.css";
 import NoData from "@/components/NoData";
 import { Toast } from "antd-mobile";
@@ -11,7 +11,11 @@ import { ReactComponent as Preview } from "@/assets/image/preview.svg";
 import { useNavigate } from "react-router-dom";
 import type { topicFileItem, baseMeetingInfo } from "@/types";
 import api from "@/apis";
-import Modal from "react-modal";
+// import Modal from "react-modal";
+
+import ModalComponent1 from "@/components/Modal";
+
+const ModalComponent = React.memo(ModalComponent1);
 
 export default function Home() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,8 +35,8 @@ export default function Home() {
                     meetingId
                 });
                 if (!ignore) {
-                    console.log(res.data);
-                    setMeetingInfo(res.data.data);
+                    console.log(res);
+                    setMeetingInfo(res);
                 }
             } catch (error) {
                 console.error(error);
@@ -44,12 +48,14 @@ export default function Home() {
         };
     }, [meetingId]);
 
+    /**开启预览模式 */
     const openModal = (index: number) => {
         setSelectedIndex(index);
         setIsModalOpen(true);
         document.body.style.overflow = "hidden"; // 禁止背后内容滚动
     };
 
+    /**关闭预览模式 */
     const closeModal = () => {
         setIsModalOpen(false);
         document.body.style.overflow = ""; // 恢复背后内容滚动
@@ -65,26 +71,36 @@ export default function Home() {
             content: "文件下载中…"
         });
         try {
-            const res = await api.downLoadTopicFile({ fileId: topicFile.id });
-            console.log(res);
-            const filename = res.headers["content-disposition"];
-            const blob = new Blob([res.data], { type: "application/pdf" });
             const a = document.createElement("a");
-            const href = window.URL.createObjectURL(blob);
             if (/MicroMessenger/i.test(navigator.userAgent)) {
                 a.href = `http://47.109.100.216:5005/no-paper-meeting/api/topic/downloadFileNoIntercept?fileId=${topicFile.id}`;
-                a.download = decodeURIComponent(filename.split("filename=")[1].replace(/"/g, ""));
+                a.download = topicFile.name;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                handler.current?.close();
             } else {
+                const res = await api.downLoadTopicFile({ fileId: topicFile.id });
+                console.log(res);
+                const filename = res.headers["content-disposition"];
+                const blob = new Blob([res.data], { type: "application/pdf" });
+                const href = window.URL.createObjectURL(blob);
                 a.href = href;
                 a.download = decodeURIComponent(filename.split("filename=")[1].replace(/"/g, ""));
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                handler.current?.close();
+                window.URL.revokeObjectURL(href);
             }
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            handler.current?.close();
-            window.URL.revokeObjectURL(href);
         } catch (e) {
             console.log(e);
+            handler.current?.close();
+            setTimeout(() => {
+                Toast.show({
+                    content: "文件下载失败"
+                });
+            }, 300);
         }
     };
     /**下载全部文件 */
@@ -94,29 +110,50 @@ export default function Home() {
             content: "文件下载中…"
         });
         try {
-            const res = await api.downloadAllFile({
-                meetingId
-            });
-            console.log("res", res);
-            const filename = res.headers["content-disposition"];
-            const blob = new Blob([res.data]);
-            // , { type: "application/zip" }
             const a = document.createElement("a");
-            const href = window.URL.createObjectURL(blob);
             if (/MicroMessenger/i.test(navigator.userAgent)) {
-                a.href = `http://47.109.100.216:5005/no-paper-meeting/api/reserve/meeting/filesBatchDownload?meetingId=${meetingId}`;
-                a.download = decodeURIComponent(filename.split("filename=")[1].replace(/"/g, ""));
+                console.log("微信浏览器");
+                a.setAttribute(
+                    "href",
+                    `http://47.109.100.216:5005/no-paper-meeting/api/reserve/meeting/filesBatchDownload?meetingId=${meetingId}`
+                );
+                // a.setAttribute("href", `http://47.109.100.216:5005/?meetingId=${meetingId}`);
+                a.setAttribute("download", meetingInfo?.title + ".zip");
+                // a.setAttribute("type", "application/zip");
+                // a.setAttribute("target", "_blank");
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                handler.current?.close();
+                // a.download = decodeURIComponent(filename.split("filename=")[1].replace(/"/g, ""));
             } else {
-                a.href = href;
-                a.download = decodeURIComponent(filename.split("filename=")[1].replace(/"/g, ""));
+                const res = await api.downloadAllFile({
+                    meetingId
+                });
+                const filename = res.headers["content-disposition"];
+                const blob = new Blob([res.data], { type: "application/zip" });
+                const href = window.URL.createObjectURL(blob);
+                a.setAttribute("href", href);
+                a.setAttribute("type", "application/zip");
+                a.setAttribute(
+                    "download",
+                    decodeURIComponent(filename.split("filename=")[1].replace(/"/g, ""))
+                );
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                handler.current?.close();
+                window.URL.revokeObjectURL(href);
+                // a.download = decodeURIComponent(filename.split("filename=")[1].replace(/"/g, ""));
             }
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            handler.current?.close();
-            window.URL.revokeObjectURL(href);
         } catch (e) {
             console.log(e);
+            handler.current?.close();
+            setTimeout(() => {
+                Toast.show({
+                    content: "文件下载失败"
+                });
+            }, 300);
         }
     };
     return meetingInfo ? (
@@ -128,7 +165,6 @@ export default function Home() {
                 <div className="container-describe">
                     {meetingInfo && meetingInfo.startTime.split(".")[0].replace(/T/, " ")}
                 </div>
-                {/* 2023-06-20 08:00:00 */}
             </div>
             <div className="container-item">
                 <div className="container-label">地点：</div>
@@ -146,7 +182,6 @@ export default function Home() {
                     {meetingInfo &&
                         meetingInfo.attendeeList.map((item) => item.userName).join("、")}
                 </div>
-                {/* 甲、乙、丙、丁 */}
             </div>
             {meetingInfo && meetingInfo.seatChart && (
                 <div className="container-item" style={{ overflow: "hidden" }}>
@@ -175,10 +210,15 @@ export default function Home() {
                     />
                 </div>
             )}
-            <Modal
+            <ModalComponent
+                closeModal={closeModal}
+                isModalOpen={isModalOpen}
+                index={selectedIndex}
+                meetingInfo={meetingInfo}
+            ></ModalComponent>
+            {/* <Modal
                 isOpen={isModalOpen}
                 onRequestClose={() => {
-                    console.log(123);
                     closeModal();
                 }}
                 // contentLabel="Image Gallery Modal"
@@ -191,7 +231,7 @@ export default function Home() {
                         src={"http://47.109.100.216:5003/media/" + meetingInfo.seatChart}
                     ></ImageGallery>
                 </div>
-            </Modal>
+            </Modal> */}
             {meetingInfo && meetingInfo.topicInfoDtos.length > 0 && (
                 <div className="container-item topic-list">
                     <div style={{ fontWeight: "bolder" }}>会议内容：</div>
@@ -202,7 +242,14 @@ export default function Home() {
                                     style={{ color: "#1296db", cursor: "pointer" }}
                                     onClick={handleDownloadAllFile}
                                 >
+                                    {/* onClick={handleDownloadAllFile} */}
+                                    {/* <a
+                                        href={`http://47.109.100.216:5005/no-paper-meeting/api/reserve/meeting/filesBatchDownload?meetingId=${meetingId}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    > */}
                                     下载全部文件
+                                    {/* </a> */}
                                 </span>
                             </div>
                         )}

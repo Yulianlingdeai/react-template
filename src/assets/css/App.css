@@ -106,7 +106,7 @@ h1 {
 }
 
 .image-gallery-slides {
-    overflow: inherit;
+    overflow: inherit !important;
     outline: none;
     border: none;
 }

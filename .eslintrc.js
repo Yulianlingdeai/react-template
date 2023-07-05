@@ -29,7 +29,8 @@ module.exports = {
     ],
     rules: {
         // 在这里可以添加你的自定义规则
-        "@typescript-eslint/no-var-requires": 0
+        "@typescript-eslint/no-var-requires": 0,
+        "@typescript-eslint/no-explicit-any": 0
     }
     // settings: {
     //     react: {
