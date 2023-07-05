@@ -73,7 +73,7 @@ export default function Home() {
         try {
             const a = document.createElement("a");
             if (/MicroMessenger/i.test(navigator.userAgent)) {
-                a.href = `http://47.109.100.216:5005/no-paper-meeting/api/topic/downloadFileNoIntercept?fileId=${topicFile.id}`;
+                a.href = `${process.env.REACT_APP_BASE_API}api/topic/downloadFileNoIntercept?fileId=${topicFile.id}`;
                 a.download = topicFile.name;
                 document.body.appendChild(a);
                 a.click();
@@ -115,7 +115,7 @@ export default function Home() {
                 console.log("微信浏览器");
                 a.setAttribute(
                     "href",
-                    `http://47.109.100.216:5005/no-paper-meeting/api/reserve/meeting/filesBatchDownload?meetingId=${meetingId}`
+                    `${process.env.REACT_APP_BASE_API}api/reserve/meeting/filesBatchDownload?meetingId=${meetingId}`
                 );
                 // a.setAttribute("href", `http://47.109.100.216:5005/?meetingId=${meetingId}`);
                 a.setAttribute("download", meetingInfo?.title + ".zip");
