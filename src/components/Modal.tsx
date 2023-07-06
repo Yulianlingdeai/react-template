@@ -5,22 +5,18 @@ import type { baseMeetingInfo } from "@/types";
 
 export default function ModalComponent({
     meetingInfo,
-    index,
     isModalOpen,
     closeModal
 }: {
     meetingInfo: baseMeetingInfo;
-    index: number;
     isModalOpen: boolean;
     closeModal: any;
 }) {
-    console.log("modal更新了");
+    console.log("ModalComponent 组件更新了");
     return (
         <Modal
             isOpen={isModalOpen}
-            onRequestClose={() => {
-                closeModal();
-            }}
+            onRequestClose={closeModal}
             // contentLabel="Image Gallery Modal"
             ariaHideApp={false}
             className="custom-modal"

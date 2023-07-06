@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import ReactImageGallery from "react-image-gallery";
 // import "react-image-gallery/styles/css/image-gallery.css";
 // import ImageGallery from "@/components/ImageGallery";
@@ -56,10 +56,10 @@ export default function Home() {
     };
 
     /**关闭预览模式 */
-    const closeModal = () => {
+    const closeModal = useCallback(() => {
         setIsModalOpen(false);
         document.body.style.overflow = ""; // 恢复背后内容滚动
-    };
+    }, []);
     /**预览pdf */
     const handlePreview = async (topicFile: topicFileItem) => {
         navigate(`/PdfPage?id=${topicFile.id}`);
@@ -213,7 +213,6 @@ export default function Home() {
             <ModalComponent
                 closeModal={closeModal}
                 isModalOpen={isModalOpen}
-                index={selectedIndex}
                 meetingInfo={meetingInfo}
             ></ModalComponent>
             {/* <Modal
