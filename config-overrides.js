@@ -10,6 +10,7 @@ const path = require("path");
 const px2rem = require("postcss-px2rem-exclude");
 const rewirePostcss = require("react-app-rewire-postcss");
 // const autoprefixer = require('autoprefixer');
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 module.exports = override(
     // 配置按需加载
     // fixBabelImports("import", {
@@ -61,6 +62,65 @@ module.exports = override(
                 // autoprefixer(), // 添加 autoprefixer 插件
             ]
         });
+        return config;
+    },
+    (config, env) => {
+        config.optimization = {
+            ...config.optimization,
+            splitChunks: {
+                chunks: "all",
+                cacheGroups: {
+                    libs: {
+                        name: "chunk-libs",
+                        test: /[\\/]node_modules[\\/]/,
+                        priority: 10,
+                        chunks: "initial" // only package third parties that are initially dependent
+                    },
+                    axios: {
+                        test: /[\\/]node_modules[\\/]_?axios(.*)/,
+                        name: "axios",
+                        priority: 20,
+                        chunks: "all"
+                    },
+                    reactImageGallery: {
+                        test: /[\\/]node_modules[\\/]_?react-image-gallery(.*)/,
+                        name: "react-image-gallery",
+                        priority: 20,
+                        chunks: "all"
+                    },
+                    reactModal: {
+                        test: /[\\/]node_modules[\\/]_?react-modal(.*)/,
+                        name: "react-modal",
+                        priority: 20,
+                        chunks: "all"
+                    },
+                    antdMobile: {
+                        test: /[\\/]node_modules[\\/]_?antd-mobile(.*)/,
+                        name: "antd-mobile",
+                        priority: 20,
+                        chunks: "all"
+                    },
+                    reactPdf: {
+                        test: /[\\/]node_modules[\\/]_?(react-pdf|pdfjs-dist)(.*)/,
+                        name: "react-pdf",
+                        priority: 20,
+                        chunks: "async"
+                    }
+                }
+            }
+        };
+        return config;
+    },
+    (config, env) => {
+        console.log("115===>>>>>>", process.env.NODE_ENV);
+        if (process.env.NODE_ENV === "production") {
+            config.plugins.push(
+                new BundleAnalyzerPlugin({
+                    analyzerMode: "static",
+                    reportFilename: "report.html"
+                })
+            );
+        }
         return config;
     },
     watchAll()

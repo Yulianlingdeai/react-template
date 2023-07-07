@@ -59,3 +59,15 @@ export type baseMeetingInfo = {
         topicFilesList: topicFileItem[];
     }[];
 };
+
+// 从类型T中排除可以赋值给U的类型  string | number
+export type otherExclude = Exclude<string | number | null, null>;
+
+// 从类型 T 中选择指定的属性集合 K  { name: string }
+export type otherPick = Pick<{ name: string; age: number }, "name">;
+
+// 将部分属性可选
+export type PartiallyOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+// 将部分属性必须
+export type MakePartialRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
